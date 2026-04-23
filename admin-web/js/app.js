@@ -1,21 +1,12 @@
 async function cargarLecturas() {
   const { data, error } = await supabaseClient
-    .from("toma_lecturas")
-    .select(`
-      nombre_usuario,
-      lectura_actual,
-      estado,
-      fecha_lectura,
-      asignaciones (
-        rutas ( nombre_ruta ),
-        ciclos ( nombre_ciclo )
-      )
-    `);
+  .from("toma_lecturas")
+  .select("*");
 
   if (error) {
-    console.error("Error:", error);
-    return;
-  }
+  console.error("Error completo:", error.message, error.details, error.hint);
+  return;
+}
 
   const tabla = document.querySelector("#tablaLecturas tbody");
   tabla.innerHTML = "";

@@ -1,1 +1,19 @@
+body {
+  font-family: Arial;
+  padding: 20px;
+}
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #1E88E5;
+  color: white;
+}
+
+td, th {
+  padding: 10px;
+  text-align: center;
+}
