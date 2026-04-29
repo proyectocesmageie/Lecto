@@ -3,13 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <title>Lecto - Panel Administrativo</title>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
-  <h1>📊 Panel Administrativo - Lecto</h1>
+  <div class="container">
 
-  <table border="1" id="tablaLecturas">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>💧 Lecto</h2>
+      <ul>
+        <li>🏠 Inicio</li>
+        <li>📊 Lecturas</li>
+        <li>🗺️ Rutas</li>
+        <li>📷 Imágenes</li>
+        <li>⚙️ Configuración</li>
+      </ul>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Header -->
+      <header class="header">
+        <h1>Panel Administrativo</h1>
+        <span class="online">🟢 Online</span>
+      </header>
+
+      <!-- Content -->
+<section class="content">
+  <h2>Lecturas recientes</h2>
+
+  <!-- 🔥 TARJETAS -->
+  <section class="cards">
+
+  <div class="card card-blue">
+    <h3>📊 Total Lecturas</h3>
+    <p id="totalLecturas">0</p>
+  </div>
+
+  <div class="card card-orange">
+    <h3>⚠️ Anómalas</h3>
+    <p id="lecturasAnomalias">0</p>
+  </div>
+
+  <div class="card card-green">
+    <h3>👷 Lectores</h3>
+    <p id="lectoresActivos">0</p>
+  </div>
+
+</section>
+
+<div class="filtros">
+
+  <select id="filtroCiclo">
+    <option value="">Seleccionar ciclo</option>
+    <option value="Ciclo 01">Ciclo 01</option>
+    <option value="Ciclo 02">Ciclo 02</option>
+  </select>
+
+  <select id="filtroLector">
+    <option value="">Seleccionar lector</option>
+    <option value="LECT-001">LECT-001</option>
+    <option value="LECT-002">LECT-002</option>
+  </select>
+
+  <button onclick="cargarLecturas()">Buscar</button>
+
+</div>
+
+  <!-- 📊 TABLA -->
+  <table id="tablaLecturas">
     <thead>
       <tr>
         <th>Usuario</th>
@@ -23,9 +90,19 @@
     <tbody></tbody>
   </table>
 
+</section>
+
+    </main>
+
+  </div>
+
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <!-- JS -->
   <script src="js/supabase.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/lecturas.js"></script>
 
 </body>
 </html>
