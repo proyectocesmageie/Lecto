@@ -223,12 +223,40 @@ class _LecturasPageState extends State<LecturasPage> {
       "mensaje": mensajeSeleccionado,
     };
 
+    print("Ruta guardada: $rutaActualizada");
+
     await AppStorage.actualizarRuta(rutaActualizada);
 
     print("Guardado local");
 
+    List rutas = await AppStorage.obtenerRutas();
+    print(rutas);
+
+    Map<String, dynamic>? siguiente;
+
+    try {
+      siguiente = rutas.firstWhere(
+        (r) => r["estado"] != "leido",
+      );
+    } catch (e) {
+      siguiente = null;
+    }
+
+    if (siguiente !=null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LecturasPage(datosRuta: siguiente!,
+        ),
+      ),
+    );
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Todas las lecturas completadas")));
+   
 
     Navigator.pop(context);
+     }
   }
 
   @override
