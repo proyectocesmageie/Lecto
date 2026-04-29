@@ -163,4 +163,48 @@ th {
   color: white;
   border: none;
   cursor: pointer;
+  transition: 0.3s;
+}
+
+.filtros button:hover {
+  background-color: #0D47A1;
+}
+
+/* ===== ESTADOS ===== */
+.estado-ok {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.estado-anomalo {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* ===== MENU ACTIVO ===== */
+.sidebar li.active {
+  background-color: rgba(255,255,255,0.3);
+  font-weight: bold;
+}
+
+tbody tr {
+  transition: 0.2s;
+}
+
+tbody tr:hover {
+  background-color: #e3f2fd;
+}
+
+@media (max-width: 768px) {
+  .cards {
+    flex-direction: column;
+  }
+
+  .filtros {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 180px;
+  }
 }

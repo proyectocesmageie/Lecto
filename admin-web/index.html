@@ -16,7 +16,7 @@
     <aside class="sidebar">
       <h2>💧 Lecto</h2>
       <ul>
-        <li>🏠 Inicio</li>
+        <li class="active">🏠 Inicio</li>
         <li>📊 Lecturas</li>
         <li>🗺️ Rutas</li>
         <li>📷 Imágenes</li>
@@ -34,63 +34,65 @@
       </header>
 
       <!-- Content -->
-<section class="content">
-  <h2>Lecturas recientes</h2>
+      <section class="content">
 
-  <!-- 🔥 TARJETAS -->
-  <section class="cards">
+        <h2>Lecturas recientes</h2>
 
-  <div class="card card-blue">
-    <h3>📊 Total Lecturas</h3>
-    <p id="totalLecturas">0</p>
-  </div>
+        <!-- 🔥 TARJETAS -->
+        <section class="cards">
 
-  <div class="card card-orange">
-    <h3>⚠️ Anómalas</h3>
-    <p id="lecturasAnomalias">0</p>
-  </div>
+          <div class="card card-blue">
+            <h3>📊 Total Lecturas</h3>
+            <p id="totalLecturas">0</p>
+          </div>
 
-  <div class="card card-green">
-    <h3>👷 Lectores</h3>
-    <p id="lectoresActivos">0</p>
-  </div>
+          <div class="card card-orange">
+            <h3>⚠️ Anómalas</h3>
+            <p id="lecturasAnomalias">0</p>
+          </div>
 
-</section>
+          <div class="card card-green">
+            <h3>👷 Lectores</h3>
+            <p id="lectoresActivos">0</p>
+          </div>
 
-<div class="filtros">
+        </section>
 
-  <select id="filtroCiclo">
-    <option value="">Seleccionar ciclo</option>
-    <option value="Ciclo 01">Ciclo 01</option>
-    <option value="Ciclo 02">Ciclo 02</option>
-  </select>
+        <!-- 🔎 FILTROS -->
+        <div class="filtros">
 
-  <select id="filtroLector">
-    <option value="">Seleccionar lector</option>
-    <option value="LECT-001">LECT-001</option>
-    <option value="LECT-002">LECT-002</option>
-  </select>
+          <select id="filtroCiclo">
+            <option value="">Seleccionar ciclo</option>
+            <option value="Ciclo 01">Ciclo 01</option>
+            <option value="Ciclo 02">Ciclo 02</option>
+          </select>
 
-  <button onclick="cargarLecturas()">Buscar</button>
+          <select id="filtroLector">
+            <option value="">Seleccionar lector</option>
+            <option value="LECT-001">LECT-001</option>
+            <option value="LECT-002">LECT-002</option>
+          </select>
 
-</div>
+          <button id="btnBuscar">Buscar</button>
 
-  <!-- 📊 TABLA -->
-  <table id="tablaLecturas">
-    <thead>
-      <tr>
-        <th>Usuario</th>
-        <th>Ruta</th>
-        <th>Ciclo</th>
-        <th>Lectura</th>
-        <th>Estado</th>
-        <th>Fecha</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+        </div>
 
-</section>
+        <!-- 📊 TABLA -->
+        <table id="tablaLecturas">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Ruta</th>
+              <th>Ciclo</th>
+              <th>Lectura</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+      </section>
 
     </main>
 
