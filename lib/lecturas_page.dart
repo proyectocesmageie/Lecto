@@ -1,248 +1,270 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import '../services/local_storage.dart';
 
 class LecturasPage extends StatefulWidget {
-  const LecturasPage({super.key});
+  final Map datosRuta;
+
+  const LecturasPage({super.key, required this.datosRuta});
 
   @override
-  _LecturasPageState createState() => _LecturasPageState();
+  State<LecturasPage> createState() => _LecturasPageState();
 }
 
 class _LecturasPageState extends State<LecturasPage> {
+  final String nombreOperario = "Wilmer";
+  final String version = "v1.0";
+  final bool conectado = true;
   final TextEditingController lecturaController = TextEditingController();
 
   bool sinLectura = false;
-  bool mostrarCamara = false;
   bool confirmado = false;
+  bool mostrarCamara = false;
+  bool fotoTomada = false;
 
   int intentos = 0;
 
-  String estadoConexion = "En línea";
-
-  String novedadSeleccionada = "Sin novedad";
-  String mensajeSeleccionado = "";
-
   String alerta = "";
 
-  int lecturaAnterior = 100;
-  int promedio = 20;
+  String? novedadSeleccionada;
+  String? mensajeSeleccionado;
 
-  bool alertaActiva = false;
-  String ultimaLecturaIntento = "";
+  final ImagePicker picker = ImagePicker();
 
-  @override
-  void initState() {
-    super.initState();
+  // 🔥 NUEVO CONTROL DE ESTADO (CLAVE)
+  String ultimaLecturaConfirmada = "";
+  bool hayAlerta = false;
 
-    lecturaController.addListener(() {
-      if (confirmado) {
-        setState(() {
-          confirmado = false;
-        });
-      }
+  Map<String, List<String>> novedadesMensajes = {
+    "3 - Caja con obstáculo": [
+      "Reja con candado",
+      "Carro en cajilla",
+      "Medidor interno",
+    ],
+    "5 - Caja inundada": ["Agua acumulada", "Tubería rota"],
+    "10 - Sin identificar": ["No se encontró medidor", "Dirección incorrecta"],
+    "24 - Medidor con vidrio ilegible": ["Vidrio empañado", "Vidrio rayado"],
+    "29 - Medidor invertido": ["Medidor al revés", "Instalación incorrecta"],
+  };
 
-      alertaActiva = false;
-    });
+  // 🔥 CUSTOM APPBAR - TU HEADER CONVERTIDO
+  // 🔥 CUSTOM APPBAR MEJORADA - Flecha + Centrado
+  Widget customAppBar() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 35, 18, 5),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF009688), Color(0xFF039354)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+      child: Column(
+        children: [
+          // 🔵 FILA SUPERIOR: Flecha + Logo + Versión
+          Row(
+            children: [
+              // 🔥 FLECHA DE RETROCEDER
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              // Logo + Título
+              const Expanded(
+                child: Row(
+                  children: [
+                    Icon(Icons.water_drop, color: Colors.white, size: 30),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "App Medidores",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                        textAlign: TextAlign.center, // Centrado
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Versión a la derecha
+              const Text("v1.0", style: TextStyle(color: Colors.white70)),
+              const SizedBox(width: 55),
+            ],
+          ),
+          const SizedBox(height: 5),
+
+          // 🔥 CONTENIDO CENTRADO
+          const Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Registro de lecturas", // ← Cambia por $nombreOperario si es dinámico
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Centrado
+                  children: [
+                    Icon(Icons.circle, size: 10, color: Colors.greenAccent),
+                    SizedBox(width: 5),
+                    Text("En línea", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  bool puedeConfirmar() {
-    if (intentos >= 3) return false;
+  Future<void> tomarFoto() async {
+    final XFile? photo = await picker.pickImage(source: ImageSource.camera);
 
+    if (photo != null) {
+      setState(() {
+        fotoTomada = true;
+      });
+    }
+  }
+
+  bool puedeEnviar() {
     if (sinLectura) {
-      return novedadSeleccionada != "Sin novedad";
+      return novedadSeleccionada != null &&
+          mensajeSeleccionado != null &&
+          fotoTomada;
     } else {
       return lecturaController.text.trim().isNotEmpty;
     }
   }
 
+  // 🔥 LÓGICA CORREGIDA (ÚNICO CAMBIO REAL)
   void confirmarLectura() {
     String lecturaTexto = lecturaController.text.trim();
     int lecturaActual = int.tryParse(lecturaTexto) ?? 0;
 
+    int lecturaAnterior = widget.datosRuta["lectura_anterior"] ?? 0;
+
+    double limiteSuperior = (widget.datosRuta["lectura_maxima"] ?? 0)
+        .toDouble();
+
+    double limiteInferior = (widget.datosRuta["lectura_minima"] ?? 0)
+        .toDouble();
+
+    // 🔁 MISMA LECTURA + ALERTA → ACEPTAR
+    if (hayAlerta && lecturaTexto == ultimaLecturaConfirmada) {
+      setState(() {
+        confirmado = true;
+        mostrarCamara = true;
+      });
+      return;
+    }
+
+    // 🔁 NUEVA LECTURA → SUMA INTENTO
+    if (lecturaTexto != ultimaLecturaConfirmada) {
+      intentos++;
+      if (intentos > 3) intentos = 3;
+    }
+
+    alerta = "";
+    hayAlerta = false;
+
+    // 🔍 VALIDACIÓN
+    if (lecturaActual < lecturaAnterior) {
+      alerta = "Consumo negativo";
+      hayAlerta = true;
+    } else if (lecturaActual >= limiteSuperior) {
+      alerta = "Consumo alto";
+      hayAlerta = true;
+    } else if (lecturaActual <= limiteInferior) {
+      alerta = "Consumo bajo";
+      hayAlerta = true;
+    }
+
     setState(() {
-      alerta = "";
-    });
+      ultimaLecturaConfirmada = lecturaTexto;
 
-    // 🔴 SI YA LLEGÓ A 3 → FORZAR ENVÍO
-    if (intentos >= 3) {
-      setState(() {
+      if (!hayAlerta) {
         confirmado = true;
-        mostrarCamara = true;
-        alerta = "Máximo de intentos alcanzado";
-        alertaActiva = false;
-      });
-      return;
-    }
+      } else {
+        confirmado = false;
+      }
 
-    // 🔹 SIN LECTURA
-    if (sinLectura) {
-      setState(() {
-        confirmado = true;
-        mostrarCamara = true;
-      });
-      return;
-    }
-
-    int consumo = lecturaActual - lecturaAnterior;
-
-    double porcentaje = promedio >= 40 ? 0.35 : 0.65;
-    double desviacion = promedio * porcentaje;
-
-    double limiteSuperior = promedio + desviacion;
-    double limiteInferior = promedio - desviacion;
-
-    bool hayDesviacion =
-        consumo >= limiteSuperior ||
-        consumo <= limiteInferior ||
-        consumo < 0;
-
-    // 🔴 PRIMERA VEZ → ALERTA Y SUMA INTENTO
-    if (hayDesviacion && !alertaActiva) {
-      setState(() {
-        alerta = consumo < 0
-            ? "Consumo negativo"
-            : consumo >= limiteSuperior
-                ? "Consumo alto"
-                : "Consumo bajo";
-
-        alertaActiva = true;
-
-        if (lecturaTexto != ultimaLecturaIntento) {
-          intentos++;
-          ultimaLecturaIntento = lecturaTexto;
-        }
-      });
-
-      // 🔥 SI AQUÍ LLEGA A 3 → FORZAR ESTADO FINAL
       if (intentos >= 3) {
-        setState(() {
-          confirmado = true;
-          mostrarCamara = true;
-        });
-      }
-
-      return;
-    }
-
-    // 🔥 SEGUNDA CONFIRMACIÓN → NO SUMA
-    if (hayDesviacion && alertaActiva) {
-      setState(() {
         confirmado = true;
         mostrarCamara = true;
-        alerta = "";
-        alertaActiva = false;
-      });
-      return;
-    }
-
-    // 🟢 LECTURA NORMAL
-    setState(() {
-      if (lecturaTexto != ultimaLecturaIntento) {
-        intentos++;
-        ultimaLecturaIntento = lecturaTexto;
       }
-
-      confirmado = true;
-      mostrarCamara = false;
-      alerta = "";
-
-      novedadSeleccionada = "Sin novedad";
-      mensajeSeleccionado = "Lectura normal";
     });
-
-    // 🔥 SI LLEGA A 3 → FORZAR CÁMARA
-    if (intentos >= 3) {
-      setState(() {
-        confirmado = true;
-        mostrarCamara = true;
-        alerta = "Máximo de intentos alcanzado";
-      });
-    }
   }
 
-  void enviarLectura() {
-    print("Lectura enviada");
+  void enviarLectura() async {
+    Map rutaActualizada = {
+      ...widget.datosRuta,
+      "lectura": lecturaController.text,
+      "estado": "leido",
+      "novedad": novedadSeleccionada,
+      "mensaje": mensajeSeleccionado,
+    };
 
-    setState(() {
-      lecturaController.clear();
-      sinLectura = false;
-      mostrarCamara = false;
-      confirmado = false;
-      intentos = 0;
+    await AppStorage.actualizarRuta(rutaActualizada);
 
-      novedadSeleccionada = "Sin novedad";
-      mensajeSeleccionado = "";
-      alerta = "";
-      alertaActiva = false;
-      ultimaLecturaIntento = "";
-    });
+    print("Guardado local");
+
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    bool habilitarBoton = confirmado || puedeConfirmar();
+    bool habilitado = puedeEnviar();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Lecturas"),
+      appBar: PreferredSize(
+        // 🔥 APPBAR PERSONALIZADA
+        preferredSize: const Size.fromHeight(100), // Altura de tu header
+        child: customAppBar(),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(15),
         child: Column(
           children: [
-
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF009688),
-                    Color(0xFF039354),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.water_drop, color: Colors.white),
-                      SizedBox(width: 8),
-                      Text("App Medidores v1.0",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Text("Bienvenido, Wilmer",
-                      style: TextStyle(color: Colors.white)),
-                  Text("Estado: $estadoConexion",
-                      style: TextStyle(color: Colors.white)),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 15),
+            const SizedBox(height: 15), // 🔥 Espaciado ajustado
 
             _card(
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _titulo("Datos del usuario"),
-                  Text("Código: 001"),
-                  Text("Nombre: Juan Pérez"),
-                  Text("Serial: 123456"),
-                  Text("Dirección: Calle 123"),
-                ],
+              Container(
+                height: 130,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _titulo("Datos del usuario"),
+                      Text("Código: ${widget.datosRuta["codigo_suscriptor"]}"),
+                      Text("Nombre: ${widget.datosRuta["nombre_usuario"]}"),
+                      Text("Medidor: ${widget.datosRuta["numero_medidor"]}"),
+                      Text("Dirección: ${widget.datosRuta["direccion"]}"),
+                    ],
+                  ),
+                ),
               ),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             _card(
               Column(
@@ -250,139 +272,104 @@ class _LecturasPageState extends State<LecturasPage> {
                 children: [
                   _titulo("Registro de lectura"),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: lecturaController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          enabled: !sinLectura && intentos < 3,
-                          onChanged: (value) {
-                            setState(() {});
-                          },
-                          decoration:
-                              InputDecoration(labelText: "Lectura"),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Text("$intentos/3"),
-                    ],
+                  TextField(
+                    controller: lecturaController,
+                    keyboardType: TextInputType.number,
+                    enabled: !sinLectura && intentos < 3,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (_) {
+                      setState(() {
+                        confirmado = false; // 🔥 clave
+                      });
+                    },
+                    decoration: InputDecoration(labelText: "Lectura"),
                   ),
 
+                  Text("$intentos/3"),
+
                   if (alerta.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text(
-                        alerta,
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    Text(alerta, style: TextStyle(color: Colors.red)),
 
                   CheckboxListTile(
                     value: sinLectura,
                     title: Text("Sin lectura"),
-                    onChanged: (intentos < 3)
-                        ? (value) {
-                            setState(() {
-                              sinLectura = value!;
-                              mostrarCamara = value;
-                            });
-                          }
-                        : null,
+                    enabled: intentos < 3,
+                    onChanged: (value) {
+                      setState(() {
+                        sinLectura = value!;
+                        mostrarCamara = value;
+                      });
+                    },
                   ),
                 ],
               ),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
-            _card(
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _titulo("Novedades"),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButton<String>(
-                          value: novedadSeleccionada,
-                          isExpanded: true,
-                          items: [
-                            "Sin novedad",
-                            "Medidor dañado",
-                            "Predio cerrado"
-                          ]
-                              .map((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (sinLectura && intentos < 3)
-                              ? (value) {
-                                  setState(() {
-                                    novedadSeleccionada = value!;
-                                  });
-                                }
-                              : null,
-                        ),
-                      ),
-
-                      SizedBox(width: 10),
-
-                      Expanded(
-                        child: DropdownButton<String>(
-                          value: mensajeSeleccionado.isEmpty
-                              ? null
-                              : mensajeSeleccionado,
-                          hint: Text("Mensaje"),
-                          isExpanded: true,
-                          items: [
-                            "Lectura normal",
-                            "Revisar",
-                            "Cliente no disponible"
-                          ]
-                              .map((e) =>
-                                  DropdownMenuItem(value: e, child: Text(e)))
-                              .toList(),
-                          onChanged: (sinLectura || confirmado)
-                              ? (value) {
-                                  setState(() {
-                                    mensajeSeleccionado = value!;
-                                  });
-                                }
-                              : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 15),
-
-            if (mostrarCamara)
-              _card(
-                Column(
-                  children: [
-                    Text("Cámara"),
-                    Icon(Icons.camera_alt, size: 50),
-                  ],
-                ),
+            if (sinLectura)
+              DropdownButtonFormField<String>(
+                value: novedadSeleccionada,
+                hint: Text("Seleccione novedad"),
+                items: novedadesMensajes.keys.map<DropdownMenuItem<String>>((
+                  novedad,
+                ) {
+                  return DropdownMenuItem<String>(
+                    value: novedad,
+                    child: Text(novedad),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    novedadSeleccionada = value;
+                    mensajeSeleccionado = null;
+                  });
+                },
               ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 10),
+
+            if (sinLectura)
+              DropdownButtonFormField<String>(
+                value: mensajeSeleccionado,
+                hint: Text("Seleccione mensaje"),
+                items:
+                    (novedadSeleccionada != null
+                            ? novedadesMensajes[novedadSeleccionada]!
+                            : [])
+                        .map<DropdownMenuItem<String>>((mensaje) {
+                          return DropdownMenuItem<String>(
+                            value: mensaje,
+                            child: Text(mensaje),
+                          );
+                        })
+                        .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    mensajeSeleccionado = value;
+                  });
+                },
+              ),
+
+            const SizedBox(height: 15),
+
+            if (sinLectura || mostrarCamara)
+              ElevatedButton.icon(
+                onPressed: tomarFoto,
+                icon: Icon(Icons.camera_alt),
+                label: Text(fotoTomada ? "Foto tomada" : "Tomar foto"),
+              ),
+
+            const SizedBox(height: 20),
 
             ElevatedButton(
-              onPressed: habilitarBoton
-                  ? (confirmado ? enviarLectura : confirmarLectura)
+              onPressed: habilitado
+                  ? (confirmado || sinLectura
+                        ? enviarLectura
+                        : confirmarLectura)
                   : null,
-              child: Text(confirmado ? "Enviar" : "Confirmar"),
-            )
+              child: Text(confirmado || sinLectura ? "Enviar" : "Confirmar"),
+            ),
           ],
         ),
       ),
@@ -392,10 +379,16 @@ class _LecturasPageState extends State<LecturasPage> {
   Widget _card(Widget child) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(15),
+      constraints: const BoxConstraints(
+        minHeight: 150, // 🔥 mismo tamaño visual pero flexible
+      ),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 3)),
+        ],
       ),
       child: child,
     );
@@ -404,7 +397,7 @@ class _LecturasPageState extends State<LecturasPage> {
   Widget _titulo(String texto) {
     return Text(
       texto,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
     );
   }
 }

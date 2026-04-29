@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'home_page.dart';
+import 'services/supabase_service.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -14,78 +11,108 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController usuarioController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  String error = "";
   bool cargando = false;
-Future<void> iniciarSesion() async {
-  String usuario = usuarioController.text.trim();
-  String password = passwordController.text.trim();
 
-  if (usuario.isEmpty || password.isEmpty) {
+  void iniciarSesion() async {
+    String usuario = usuarioController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (usuario.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Completa todos los campos")),
+      );
+      return;
+    }
+
     setState(() {
-      error = "Todos los campos son obligatorios";
+      cargando = true;
     });
-    return;
-  }
 
-  setState(() {
-    cargando = true;
-    error = "";
-  });
+    try {
+      final data = await supabase
+          .from('usuarios')
+          .select()
+          .eq('identificador', usuario)
+          .eq('contrasena', password)
+          .maybeSingle();
 
-  await Future.delayed(Duration(seconds: 1)); // Simula conexión
+      if (data == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Usuario o contraseña incorrectos")),
+        );
+      } else if (data["rol"] != "operario") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Acceso solo para operarios")),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error de conexión")),
+      );
+      print(e);
+    }
 
-  // 🔥 SIMULACIÓN REALISTA (como si fuera BD)
-  if (usuario == "admin" && password == "1234") {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
-  } else {
     setState(() {
-      error = "Usuario o contraseña incorrectos";
+      cargando = false;
     });
   }
-
-  setState(() {
-    cargando = false;
-  });
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Inicio de Sesión"),
-      ),
+      backgroundColor: Colors.white,
+
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
+            Icon(Icons.water_drop, size: 80, color: Colors.teal),
+
+            SizedBox(height: 20),
+
+            Text(
+              "App Medidores",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+
+            SizedBox(height: 30),
+
             TextField(
               controller: usuarioController,
-              decoration: InputDecoration(labelText: "Correo"),
+              decoration: InputDecoration(
+                labelText: "Usuario",
+                border: OutlineInputBorder(),
+              ),
             ),
-            SizedBox(height: 10),
+
+            SizedBox(height: 15),
+
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: "Contraseña"),
+              decoration: InputDecoration(
+                labelText: "Contraseña",
+                border: OutlineInputBorder(),
+              ),
             ),
+
             SizedBox(height: 20),
 
-            cargando
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: iniciarSesion,
-                    child: Text("Iniciar sesión"),
-                  ),
-
-            SizedBox(height: 10),
-
-            Text(
-              error,
-              style: TextStyle(color: Colors.red),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: cargando ? null : iniciarSesion,
+                child: cargando
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text("Iniciar sesión"),
+              ),
             )
           ],
         ),
