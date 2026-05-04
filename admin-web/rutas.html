@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cargar Rutas - Lecto</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
 
+<body>
+
+<div class="container">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>💧 Lecto</h2>
+    <ul>
+      <li onclick="window.location='index.html'">🏠 Inicio</li>
+      <li>📊 Lecturas</li>
+      <li class="active">🗺️ Rutas</li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="header">
+      <h1>Cargar Rutas</h1>
+    </header>
+
+    <section class="content">
+
+      <div class="card">
+
+        <h3>📥 Subir archivo de lecturas</h3>
+
+        <div class="filtros">
+
+          <select id="ciclo">
+            <option value="">Seleccionar ciclo</option>
+            <option value="Ciclo 01">Ciclo 01</option>
+            <option value="Ciclo 02">Ciclo 02</option>
+          </select>
+
+          <select id="lector">
+            <option value="">Seleccionar lector</option>
+            <option value="LECT-001">LECT-001</option>
+            <option value="LECT-002">LECT-002</option>
+          </select>
+
+        </div>
+
+        <input type="file" id="archivo">
+
+        <br><br>
+
+        <button id="btnSubir">Subir archivo</button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/rutas.js"></script>
+
+</body>
+</html>
