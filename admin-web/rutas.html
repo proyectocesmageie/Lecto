@@ -33,27 +33,54 @@
 
         <h3>📥 Subir archivo de lecturas</h3>
 
-        <div class="filtros">
+          <div class="filtros">
 
-          <select id="ciclo">
-            <option value="">Seleccionar ciclo</option>
-            <option value="Ciclo 01">Ciclo 01</option>
-            <option value="Ciclo 02">Ciclo 02</option>
-          </select>
+            <select id="ciclo">
+              <option value="">Seleccionar ciclo</option>
+              <option value="01">Ciclo 01</option>
+              <option value="02">Ciclo 02</option>
+            </select>
 
-          <select id="lector">
-            <option value="">Seleccionar lector</option>
-            <option value="LECT-001">LECT-001</option>
-            <option value="LECT-002">LECT-002</option>
-          </select>
+            <select id="lector">
+              <option value="">Seleccionar lector</option>
+              <option value="LECT-001">LECT-001</option>
+              <option value="LECT-002">LECT-002</option>
+            </select>
 
-        </div>
+          </div>
 
-        <input type="file" id="archivo">
+          <!-- 🚀 DROPZONE -->
+          <div class="drop-zone" id="dropZone">
 
-        <br><br>
+            <p class="drop-title">Arrastra aquí tu archivo</p>
+            <p class="drop-subtitle">o haz clic para seleccionarlo</p>
 
-        <button id="btnSubir">Subir archivo</button>
+            <input type="file" id="archivo" hidden>
+
+            <button id="btnSeleccionar">
+              Seleccionar archivo
+            </button>
+
+          </div>
+
+          <!-- INFO ARCHIVO -->
+          <div class="archivo-info" id="archivoInfo" style="display:none;">
+
+            <p><strong>Archivo:</strong> <span id="nombreArchivo"></span></p>
+            <p><strong>Registros detectados:</strong> <span id="totalRegistros"></span></p>
+
+          </div>
+
+          <!-- BARRA -->
+          <div class="progress-container" style="display:none;" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <br>
+
+          <button id="btnSubir">
+            🚀 Procesar archivo
+          </button>
 
       </div>
 
