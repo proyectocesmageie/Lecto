@@ -128,12 +128,12 @@ html, body {
 }
 
 .sidebar-logo {
-  width: 44px;
-  height: 44px;
+  width: 70px;
+  height: 70px;
   object-fit: contain;
   border-radius: 10px;
   background: rgba(255,255,255,0.1);
-  padding: 2px;
+  padding: 4px;
   flex-shrink: 0;
 }
 

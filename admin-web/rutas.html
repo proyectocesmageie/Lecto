@@ -2,85 +2,396 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Cargar Rutas - Lecto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecto — Cargar Rutas</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-<div class="container">
+<div class="app-shell">
 
-  <!-- Sidebar -->
+  <!-- ══════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════ -->
   <aside class="sidebar">
-    <h2>💧 Lecto</h2>
-    <ul>
-      <li onclick="window.location='index.html'">🏠 Inicio</li>
-      <li>📊 Lecturas</li>
-      <li class="active">🗺️ Rutas</li>
-    </ul>
+
+    <!-- Logo -->
+    <div class="sidebar-brand">
+
+      <img src="logo-lecto.png"
+           alt="Lecto"
+           class="sidebar-logo">
+
+      <div class="sidebar-brand-text">
+        <span class="sidebar-app-name">Lecto</span>
+        <span class="sidebar-app-tagline">
+          Gestión de Lecturas
+        </span>
+      </div>
+
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- Navegación -->
+    <nav class="sidebar-nav">
+
+      <p class="sidebar-section-label">
+        Principal
+      </p>
+
+      <ul>
+
+        <!-- INICIO -->
+        <li onclick="window.location='index.html'"
+            style="cursor:pointer;">
+
+          <span class="nav-icon">
+            <svg width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+              <rect x="3" y="3" width="7" height="7"/>
+              <rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/>
+              <rect x="3" y="14" width="7" height="7"/>
+
+            </svg>
+          </span>
+
+          <span class="nav-label">Inicio</span>
+
+        </li>
+
+        <!-- LECTURAS -->
+        <li>
+
+          <span class="nav-icon">
+            <svg width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+
+            </svg>
+          </span>
+
+          <span class="nav-label">Lecturas</span>
+
+        </li>
+
+        <!-- RUTAS -->
+        <li class="active"
+            onclick="window.location='rutas.html'"
+            style="cursor:pointer;">
+
+          <span class="nav-icon">
+            <svg width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+
+            </svg>
+          </span>
+
+          <span class="nav-label">Rutas</span>
+
+        </li>
+
+        <!-- IMÁGENES -->
+        <li>
+
+          <span class="nav-icon">
+            <svg width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+              <rect x="3"
+                    y="3"
+                    width="18"
+                    height="18"
+                    rx="2"/>
+
+              <circle cx="8.5"
+                      cy="8.5"
+                      r="1.5"/>
+
+              <polyline points="21 15 16 10 5 21"/>
+
+            </svg>
+          </span>
+
+          <span class="nav-label">Imágenes</span>
+
+        </li>
+
+      </ul>
+
+      <p class="sidebar-section-label"
+         style="margin-top: 28px;">
+         Sistema
+      </p>
+
+      <ul>
+
+        <li>
+
+          <span class="nav-icon">
+            <svg width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.07 4.93a10 10 0 010 14.14"/>
+              <path d="M4.93 4.93a10 10 0 000 14.14"/>
+
+            </svg>
+          </span>
+
+          <span class="nav-label">
+            Configuración
+          </span>
+
+        </li>
+
+      </ul>
+
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+
+      <div class="sidebar-user">
+
+        <div class="user-avatar">
+          A
+        </div>
+
+        <div class="user-info">
+          <span class="user-name">
+            Administrador
+          </span>
+
+          <span class="user-role">
+            Super Admin
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
   </aside>
 
-  <!-- Main -->
+  <!-- ══════════════════════════════════════
+       MAIN
+  ══════════════════════════════════════ -->
   <main class="main">
 
-    <header class="header">
-      <h1>Cargar Rutas</h1>
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <div class="breadcrumb">
+
+          <span class="breadcrumb-root">
+            Lecto
+          </span>
+
+          <svg width="14"
+               height="14"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round">
+
+            <polyline points="9 18 15 12 9 6"/>
+
+          </svg>
+
+          <span class="breadcrumb-current">
+            Cargar Rutas
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="topbar-right">
+
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Conectado</span>
+        </div>
+
+        <div class="topbar-date"
+             id="topbar-date">
+        </div>
+
+      </div>
+
     </header>
 
+    <!-- CONTENT -->
     <section class="content">
 
+      <!-- HEADER -->
+      <div class="page-header">
+
+        <div>
+
+          <h1 class="page-title">
+            Cargar Rutas
+          </h1>
+
+          <p class="page-subtitle">
+            Procesamiento masivo de archivos de lectura
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- CARD -->
       <div class="card">
 
-        <h3>📥 Subir archivo de lecturas</h3>
+        <h3>
+          📥 Subir archivo de lecturas
+        </h3>
 
-          <div class="filtros">
+        <!-- FILTROS -->
+        <div class="filtros">
 
-            <select id="ciclo">
-              <option value="">Seleccionar ciclo</option>
-              <option value="01">Ciclo 01</option>
-              <option value="02">Ciclo 02</option>
-            </select>
+          <select id="ciclo">
 
-            <select id="lector">
-              <option value="">Seleccionar lector</option>
-              <option value="LECT-001">LECT-001</option>
-              <option value="LECT-002">LECT-002</option>
-            </select>
+            <option value="">
+              Seleccionar ciclo
+            </option>
 
-          </div>
+            <option value="01">
+              Ciclo 01
+            </option>
 
-          <!-- 🚀 DROPZONE -->
-          <div class="drop-zone" id="dropZone">
+            <option value="02">
+              Ciclo 02
+            </option>
 
-            <p class="drop-title">Arrastra aquí tu archivo</p>
-            <p class="drop-subtitle">o haz clic para seleccionarlo</p>
+          </select>
 
-            <input type="file" id="archivo" hidden>
+          <select id="lector">
 
-            <button id="btnSeleccionar">
-              Seleccionar archivo
-            </button>
+            <option value="">
+              Seleccionar lector
+            </option>
 
-          </div>
+            <option value="LECT-001">
+              LECT-001
+            </option>
 
-          <!-- INFO ARCHIVO -->
-          <div class="archivo-info" id="archivoInfo" style="display:none;">
+            <option value="LECT-002">
+              LECT-002
+            </option>
 
-            <p><strong>Archivo:</strong> <span id="nombreArchivo"></span></p>
-            <p><strong>Registros detectados:</strong> <span id="totalRegistros"></span></p>
+          </select>
 
-          </div>
+        </div>
 
-          <!-- BARRA -->
-          <div class="progress-container" style="display:none;" id="progressContainer">
-            <div class="progress-bar" id="progressBar"></div>
-          </div>
+        <!-- DROPZONE -->
+        <div class="drop-zone"
+             id="dropZone">
 
-          <br>
+          <p class="drop-title">
+            Arrastra aquí tu archivo
+          </p>
 
-          <button id="btnSubir">
-            🚀 Procesar archivo
+          <p class="drop-subtitle">
+            o haz clic para seleccionarlo
+          </p>
+
+          <input type="file"
+                 id="archivo"
+                 hidden>
+
+          <button id="btnSeleccionar">
+            Seleccionar archivo
           </button>
+
+        </div>
+
+        <!-- INFO -->
+        <div class="archivo-info"
+             id="archivoInfo"
+             style="display:none;">
+
+          <p>
+            <strong>Archivo:</strong>
+            <span id="nombreArchivo"></span>
+          </p>
+
+          <p>
+            <strong>Registros detectados:</strong>
+            <span id="totalRegistros"></span>
+          </p>
+
+        </div>
+
+        <!-- PROGRESO -->
+        <div class="progress-container"
+             style="display:none;"
+             id="progressContainer">
+
+          <div class="progress-bar"
+               id="progressBar">
+          </div>
+
+        </div>
+
+        <br>
+
+        <!-- BOTÓN -->
+        <button id="btnSubir"
+                class="btn-primary">
+
+          🚀 Procesar archivo
+
+        </button>
 
       </div>
 
@@ -90,9 +401,30 @@
 
 </div>
 
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<!-- JS -->
 <script src="js/supabase.js"></script>
 <script src="js/rutas.js"></script>
+
+<!-- FECHA -->
+<script>
+
+  const d = new Date();
+
+  document.getElementById('topbar-date').textContent =
+    d.toLocaleDateString(
+      'es-CO',
+      {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }
+    );
+
+</script>
 
 </body>
 </html>
