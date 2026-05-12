@@ -45,7 +45,7 @@ async function iniciarSesion() {
     );
 
     // ✅ REDIRECCIÓN POR ROL
-window.location = "index.html";
+window.location = "dashboard.html";
 
   } catch (err) {
 
