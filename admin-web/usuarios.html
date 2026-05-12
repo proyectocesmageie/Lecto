@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios — Lecto</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-brand">
+      <img src="logo-lecto.png" alt="Lecto" class="sidebar-logo">
+
+      <div class="sidebar-brand-text">
+        <span class="sidebar-app-name">Lecto</span>
+        <span class="sidebar-app-tagline">
+          Gestión de Lecturas
+        </span>
+      </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <nav class="sidebar-nav">
+
+      <p class="sidebar-section-label">Principal</p>
+
+      <ul>
+
+        <li onclick="window.location='index.html'" style="cursor:pointer;">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Inicio</span>
+        </li>
+
+        <li onclick="window.location='rutas.html'" style="cursor:pointer;">
+          <span class="nav-icon">🗺️</span>
+          <span class="nav-label">Rutas</span>
+        </li>
+
+        <li class="active">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">Usuarios</span>
+        </li>
+
+      </ul>
+
+    </nav>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <div class="breadcrumb">
+          <span class="breadcrumb-root">Lecto</span>
+
+          <span class="breadcrumb-current">
+            Usuarios
+          </span>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- CONTENT -->
+    <section class="content">
+
+      <!-- HEADER -->
+      <div class="page-header">
+
+        <div>
+          <h1 class="page-title">
+            Gestión de Usuarios
+          </h1>
+
+          <p class="page-subtitle">
+            Administración de lectores y usuarios del sistema
+          </p>
+        </div>
+
+      </div>
+
+      <!-- FORMULARIO -->
+      <div class="card">
+
+        <h3>➕ Registrar Usuario</h3>
+
+        <div class="filtros">
+
+          <input
+            type="text"
+            id="nombre"
+            placeholder="Nombre completo"
+            class="filter-select"
+          >
+
+          <input
+            type="email"
+            id="correo"
+            placeholder="Correo"
+            class="filter-select"
+          >
+
+        </div>
+
+        <br>
+
+        <div class="filtros">
+
+          <input
+            type="password"
+            id="contrasena"
+            placeholder="Contraseña"
+            class="filter-select"
+          >
+
+          <select id="rol" class="filter-select">
+            <option value="">Seleccionar rol</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="LECTOR">LECTOR</option>
+          </select>
+
+        </div>
+
+        <br>
+
+        <input
+          type="text"
+          id="identificador"
+          placeholder="Identificador (Ej: LECT-001)"
+          class="filter-select"
+        >
+
+        <br><br>
+
+        <button id="btnGuardar" class="btn-primary">
+          💾 Guardar Usuario
+        </button>
+
+      </div>
+
+      <br>
+
+      <!-- TABLA -->
+      <div class="table-wrapper">
+
+        <div class="table-header">
+
+          <div>
+            <h2 class="table-title">
+              Usuarios Registrados
+            </h2>
+
+            <p class="table-subtitle">
+              Lista de usuarios del sistema
+            </p>
+          </div>
+
+        </div>
+
+        <div class="table-scroll">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Identificador</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="tablaUsuarios">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script src="js/supabase.js"></script>
+<script src="js/usuarios.js"></script>
+
+</body>
+</html>
